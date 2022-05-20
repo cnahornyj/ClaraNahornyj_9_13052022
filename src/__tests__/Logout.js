@@ -36,14 +36,20 @@ describe('Given I am connected', () => {
       window.localStorage.setItem('user', JSON.stringify({
         type: 'Admin'
       }))
+      // Je me situe sur la page Dashboard
       document.body.innerHTML = DashboardUI({ bills })
+      // Récupérer la classe Logout pour la simuler
       const logout = new Logout({ document, onNavigate, localStorage })
+      // Récupérer la fonction dans cette classe
       const handleClick = jest.fn(logout.handleClick)
 
+      // Simuler le click sur le bouton de deconnexion ?
       const disco = screen.getByTestId('layout-disconnect')
       disco.addEventListener('click', handleClick)
       userEvent.click(disco)
+      // Vérifier si la fonction a été appelée
       expect(handleClick).toHaveBeenCalled()
+      // Vérifier si le texte Administration est présent
       expect(screen.getByText('Administration')).toBeTruthy()
     })
   })
