@@ -241,6 +241,7 @@ describe('Given I am connected as Admin and I am on Dashboard page and I clicked
 })
 
 // test d'intégration GET
+// prendre exemple pour GET BILLS
 describe("Given I am a user connected as Admin", () => {
   describe("When I navigate to Dashboard", () => {
     test("fetches bills from mock API GET", async () => {
@@ -269,6 +270,7 @@ describe("Given I am a user connected as Admin", () => {
         type: 'Admin',
         email: "a@a"
       }))
+      // simulation du router
       const root = document.createElement("div")
       root.setAttribute("id", "root")
       document.body.appendChild(root)
