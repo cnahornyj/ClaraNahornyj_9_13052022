@@ -4,8 +4,9 @@
 
 import {screen, waitFor} from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
+import Actions from "../views/Actions.js";
 import { bills } from "../fixtures/bills.js"
-import { ROUTES_PATH} from "../constants/routes.js";
+import { ROUTES, ROUTES_PATH} from "../constants/routes.js";
 import {localStorageMock} from "../__mocks__/localStorage.js";
 import userEvent from '@testing-library/user-event'
 
@@ -41,6 +42,30 @@ describe("Given I am connected as an employee", () => {
       const datesSorted = [...dates].sort(antiChrono)
       expect(dates).toEqual(datesSorted)
     })
+
+    test("Then bills should have an icon that allows you to look at its proof", () => {
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee'
+      }))
+      // const html = Actions()
+      // document.body.innerHTML = html
+      // expect(screen.getByTestId('icon-eye')).toBeTruthy()
+      // L'attribut data test-id icon-eye se situe dans views/Actions.js
+      // Récupérer la classe Bills pour la simuler
+      // const newBill = new Bills({ document, onNavigate, store:null, localStorage})
+      // // Récupérer la fonction dans cette classe
+      // const handleClickIconEye = jest.fn((icon) => newBill.handleClickIconEye(icon))
+      // // Vérifier l'existence d'un btn icon eye ?
+      // const btnIconEye = screen.getByTestId("icon-eye")
+      // // Vérifier l'existence d'une div id modale-file
+      // const modale = screen.getByTestId("modale")
+      // // Passer un event click avec handClickIconEye en fonction (voir pour le paramètre icon)
+      // btnIconEye.addEventListener('click', handleClickIconEye)
+      // // Vérifier l'attribut de l'icon et vérifier qu'il soit le même (data-bill-url === div.bill-proof-container > img src)
+      // // Vérifier que la div id modale-file a une class show
+      // expect(screen.getByText('Justificatif')).toBeTruthy()
+    })
   })
   describe("When Im on Bills Page and I click on NewBill Button", () => {
     test("Then I should be directed to the NewBill page", () => {
@@ -64,12 +89,23 @@ describe("Given I am connected as an employee", () => {
       userEvent.click(btnNewBill)
       // Vérifier que la fonction a bien été appelée
       expect(handleClickNewBill).toHaveBeenCalled()
-      // Simuler la redirection avec le router ?
-      // expect(screen.getByText('Envoyer une note de frais')).toBeTruthy()
-      // problème d'asynchronicité vis à vis du router ?
+      expect(screen.getByText('Envoyer une note de frais')).toBeTruthy()
     })
   })
+  // describe("When I navigate to Dashboard", () => {
+  //   test("fetches bills from mock API GET", async () => {
+  //     localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
+  //     const root = document.createElement("div")
+  //     root.setAttribute("id", "root")
+  //     document.body.append(root)
+  //     router()
+  //     window.onNavigate(ROUTES_PATH.Dashboard)
+  //     await waitFor(() => expect(screen.getByText("Mes notes de frais")).toBeTruthy())
+  //     const contentPending  = await screen.getByText("En attente (1)")
+  //     expect(contentPending).toBeTruthy()
+  //     const contentRefused  = await screen.getByText("Refusé (2)")
+  //     expect(contentRefused).toBeTruthy()
+  //     expect(screen.getByTestId("big-billed-icon")).toBeTruthy()
+  //   })
+  // })
 })
-
-
-//
