@@ -2,14 +2,34 @@
  * @jest-environment jsdom
  */
 
-import { screen, fireEvent } from "@testing-library/dom";
+import { screen, fireEvent, userEvent } from "@testing-library/dom";
 import NewBillUI from "../views/NewBillUI.js";
 import NewBill from "../containers/NewBill.js";
+import {ROUTES} from "../constants/routes";
+import {localStorageMock} from "../__mocks__/localStorage.js";
 
 describe("Given I am connected as an employee and I'm on NewBill Page", () => {
   describe("When I click on the Send button of the form", () => {
     test("Then I should be sent to dashboard page", () => {
-      expect(screen.getAllByText("Mes notes de frais")).toBeTruthy();
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname })
+      }
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee',
+      }))
+      document.body.innerHTML = NewBillUI()
+      // Récupérer la classe NewBill pour la simuler
+      const newBill = new NewBill({ document, onNavigate, store:null, localStorage})
+      // A VERIFIER POUR LE PARAMETRE
+      const handleSubmit = jest.fn((e) => newBill.handleSubmit(e))
+      const submitForm = screen.getByTestId("form-new-bill")
+      submitForm.addEventListener('click', handleSubmit)
+      userEvent.click(submitForm)
+      // VOIR COMMENT CES FONCTIONS SONT DECLENCHEES
+      const updateBill = jest.fn((bill) => newBill.updateBill)
+      expect(updateBill).toHaveBeenCalled()
+      expect(screen.getByText('Mes notes de frais')).toBeTruthy()
     });
   });
   describe("When I don't fill in the field(s) of the form for creating an expense report and I click on the Send button", () => {
