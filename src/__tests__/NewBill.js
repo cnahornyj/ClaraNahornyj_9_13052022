@@ -34,7 +34,6 @@ describe("Given I am connected as an employee and I'm on NewBill Page", () => {
       expect(form).toBeTruthy;
     });
   });
-
   describe("When I click on the Ajouter un fichier button", () => {
     test("Then, the function to change file should be called", () => {
       const onNavigate = (pathname) => {
@@ -123,7 +122,6 @@ describe("Given I am connected as an employee and I'm on NewBill Page", () => {
       //expect(screen.getByText('Mes notes de frais')).toBeTruthy()
     });
   });
-
   // describe("When I don't fill in the field(s) of the form for creating an expense report and I click on the Send button", () => {
   //   test("I stay on the Newbill page and I am asked to fill in the missing field(s)", () => {
   //     const html = NewBillUI();
@@ -203,9 +201,4 @@ describe("Given I am connected as an employee and I'm on NewBill Page", () => {
   //     // ___________________________________________________________________________________________
   //   });
   // });
-  describe("When I click on the Back button in the navigation", () => {
-    test("I am sent to the Dashboard page", () => {
-      //to-do write assertion
-    });
-  });
 });
