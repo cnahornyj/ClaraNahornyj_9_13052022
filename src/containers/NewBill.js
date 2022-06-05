@@ -51,15 +51,11 @@ export default class NewBill {
           this.billId = key;
           this.fileUrl = fileUrl;
           this.fileName = fileName;
-          console.log(fileUrl, fileName);
           message.textContent = ``;
-          fileInput.classList.replace("red-border","blue-border");
-          console.log(message.textContent);
         })
         .catch((error) => console.error(error));
     } else {
       message.textContent = `Format de fichier attendu : PNG, JPEG ou JPG`;
-      fileInput.classList.replace("blue-border","red-border");
     }
   };
   handleSubmit = (e) => {
