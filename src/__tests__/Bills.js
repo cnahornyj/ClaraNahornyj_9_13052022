@@ -3,18 +3,16 @@
  */
 
 import { screen, waitFor } from "@testing-library/dom";
+import userEvent from "@testing-library/user-event";
+import Bills from "../containers/Bills.js";
 import BillsUI from "../views/BillsUI.js";
-import Actions from "../views/Actions.js";
 import { bills } from "../fixtures/bills.js";
 import { ROUTES, ROUTES_PATH } from "../constants/routes.js";
 import { localStorageMock } from "../__mocks__/localStorage.js";
-import userEvent from "@testing-library/user-event";
 import mockStore from "../__mocks__/store";
-
 import router from "../app/Router.js";
-import Bills from "../containers/Bills.js";
 
-jest.mock("../app/store", () => mockStore)
+jest.mock("../app/store", () => mockStore);
 
 describe("Given I am connected as an employee", () => {
   describe("When I navigate to Bills Page", () => {
@@ -100,11 +98,8 @@ describe("Given I am connected as an employee", () => {
 
       window.onNavigate(ROUTES_PATH.Bills);
       await waitFor(() => screen.getByTestId("icon-window"));
-      const windowIcon = screen.getByTestId("icon-window");
-      // Vérifie si la classe active-icon est présente
-      // expect(windowIcon.classList.contains("active-icon")).toBe(true);
+      // A VOIR
     });
-
     test("Then bills should be ordered from earliest to latest", () => {
       document.body.innerHTML = BillsUI({ data: bills });
       const dates = screen
@@ -115,35 +110,6 @@ describe("Given I am connected as an employee", () => {
       const antiChrono = (a, b) => (a < b ? 1 : -1);
       const datesSorted = [...dates].sort(antiChrono);
       expect(dates).toEqual(datesSorted);
-    });
-
-    test("Then bills should have an icon that allows you to look at its proof", () => {
-      Object.defineProperty(window, "localStorage", {
-        value: localStorageMock,
-      });
-      window.localStorage.setItem(
-        "user",
-        JSON.stringify({
-          type: "Employee",
-        })
-      );
-      // const html = Actions()
-      // document.body.innerHTML = html
-      // expect(screen.getByTestId('icon-eye')).toBeTruthy()
-      // L'attribut data test-id icon-eye se situe dans views/Actions.js
-      // Récupérer la classe Bills pour la simuler
-      // const newBill = new Bills({ document, onNavigate, store:null, localStorage})
-      // // Récupérer la fonction dans cette classe
-      // const handleClickIconEye = jest.fn((icon) => newBill.handleClickIconEye(icon))
-      // // Vérifier l'existence d'un btn icon eye ?
-      // const btnIconEye = screen.getByTestId("icon-eye")
-      // // Vérifier l'existence d'une div id modale-file
-      // const modale = screen.getByTestId("modale")
-      // // Passer un event click avec handClickIconEye en fonction (voir pour le paramètre icon)
-      // btnIconEye.addEventListener('click', handleClickIconEye)
-      // // Vérifier l'attribut de l'icon et vérifier qu'il soit le même (data-bill-url === div.bill-proof-container > img src)
-      // // Vérifier que la div id modale-file a une class show
-      // expect(screen.getByText('Justificatif')).toBeTruthy()
     });
   });
   describe("When I click on NewBill Button", () => {
@@ -179,6 +145,40 @@ describe("Given I am connected as an employee", () => {
       // Vérifier que la fonction a bien été appelée
       expect(handleClickNewBill).toHaveBeenCalled();
       expect(screen.getByText("Envoyer une note de frais")).toBeTruthy();
+    });
+  });
+  describe("When I click on Eye Icon of a bill", () => {
+    test("Then a modal is open", () => {
+      // mock bootstrap
+      $.fn.modal = jest.fn();
+      const html = BillsUI({ data: bills });
+      document.body.innerHTML = html;
+
+      const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({ pathname });
+      };
+      const containerBills = new Bills({
+        document,
+        onNavigate,
+        localStorage: null,
+      });
+
+      const handleClick = jest.spyOn(containerBills, "handleClickIconEye")
+      const iconsEye = screen.getAllByTestId("icon-eye")
+      const iconEye = iconsEye[0]
+      iconEye.addEventListener("click", handleClick(iconEye))
+
+      userEvent.click(iconEye)
+
+      // tester les éléments en hidden true
+      const modal = screen.getByRole("dialog", { hidden: true })
+      const attachedFile = iconsEye[0]
+        .getAttribute("data-bill-url")
+        .split("?")[0];
+
+      expect(handleClick).toHaveBeenCalled()
+      expect(modal).toBeTruthy()
+      expect(modal.innerHTML.includes(attachedFile)).toBeTruthy()
     });
   });
 });
