@@ -149,7 +149,7 @@ describe("Given I am connected as an employee", () => {
   });
   describe("When I click on Eye Icon of a bill", () => {
     test("Then a modal is open", () => {
-      // mock bootstrap
+      // Mock bootstrap
       $.fn.modal = jest.fn();
       const html = BillsUI({ data: bills });
       document.body.innerHTML = html;
@@ -170,7 +170,7 @@ describe("Given I am connected as an employee", () => {
 
       userEvent.click(iconEye)
 
-      // tester les éléments en hidden true
+      // Tester les éléments en hidden true
       const modal = screen.getByRole("dialog", { hidden: true })
       const attachedFile = iconsEye[0]
         .getAttribute("data-bill-url")
